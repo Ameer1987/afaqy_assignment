@@ -52,7 +52,7 @@ class Vehicles
     /**
      * @var \DateTime|null
      *
-     * @ORM\Column(name="year", type="date", nullable=true)
+     * @ORM\Column(name="year", type="string", length=255, nullable=true)
      */
     private $year;
 
