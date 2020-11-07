@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Vehicle
  *
  * @ORM\Table(name="vehicles", uniqueConstraints={@ORM\UniqueConstraint(name="vehicles_plate_number_unique", columns={"plate_number"}), @ORM\UniqueConstraint(name="vehicles_vin_unique", columns={"vin"}), @ORM\UniqueConstraint(name="vehicles_name_unique", columns={"name"}), @ORM\UniqueConstraint(name="vehicles_imei_unique", columns={"imei"}), @ORM\UniqueConstraint(name="vehicles_license_unique", columns={"license"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\VehicleRepository")
  */
 class Vehicle
 {
@@ -231,5 +231,71 @@ class Vehicle
         return new ArrayCollection(
             array_merge($this->fuelEntries->toArray(), $this->insurancePayments->toArray(), $this->services->toArray())
         );
+    }
+
+    public function addService(Service $service): self
+    {
+        if (!$this->services->contains($service)) {
+            $this->services[] = $service;
+            $service->setVehicle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeService(Service $service): self
+    {
+        if ($this->services->removeElement($service)) {
+            // set the owning side to null (unless already changed)
+            if ($service->getVehicle() === $this) {
+                $service->setVehicle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addFuelEntry(FuelEntry $fuelEntry): self
+    {
+        if (!$this->fuelEntries->contains($fuelEntry)) {
+            $this->fuelEntries[] = $fuelEntry;
+            $fuelEntry->setVehicle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFuelEntry(FuelEntry $fuelEntry): self
+    {
+        if ($this->fuelEntries->removeElement($fuelEntry)) {
+            // set the owning side to null (unless already changed)
+            if ($fuelEntry->getVehicle() === $this) {
+                $fuelEntry->setVehicle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addInsurancePayment(InsurancePayment $insurancePayment): self
+    {
+        if (!$this->insurancePayments->contains($insurancePayment)) {
+            $this->insurancePayments[] = $insurancePayment;
+            $insurancePayment->setVehicle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInsurancePayment(InsurancePayment $insurancePayment): self
+    {
+        if ($this->insurancePayments->removeElement($insurancePayment)) {
+            // set the owning side to null (unless already changed)
+            if ($insurancePayment->getVehicle() === $this) {
+                $insurancePayment->setVehicle(null);
+            }
+        }
+
+        return $this;
     }
 }
