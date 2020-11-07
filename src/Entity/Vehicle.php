@@ -2,15 +2,17 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Vehicles
+ * Vehicle
  *
  * @ORM\Table(name="vehicles", uniqueConstraints={@ORM\UniqueConstraint(name="vehicles_plate_number_unique", columns={"plate_number"}), @ORM\UniqueConstraint(name="vehicles_vin_unique", columns={"vin"}), @ORM\UniqueConstraint(name="vehicles_name_unique", columns={"name"}), @ORM\UniqueConstraint(name="vehicles_imei_unique", columns={"imei"}), @ORM\UniqueConstraint(name="vehicles_license_unique", columns={"license"})})
  * @ORM\Entity
  */
-class Vehicles
+class Vehicle
 {
     /**
      * @var int
@@ -64,6 +66,21 @@ class Vehicles
     private $license;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Service", mappedBy="vehicle")
+     */
+    private $services;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\FuelEntry", mappedBy="vehicle")
+     */
+    private $fuelEntries;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\InsurancePayment", mappedBy="vehicle")
+     */
+    private $insurancePayments;
+
+    /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
@@ -76,6 +93,13 @@ class Vehicles
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    public function __construct()
+    {
+        $this->services = new ArrayCollection();
+        $this->fuelEntries = new ArrayCollection();
+        $this->insurancePayments = new ArrayCollection();
+    }
 
     public function getId(): ?string
     {
@@ -154,6 +178,30 @@ class Vehicles
         return $this;
     }
 
+    /**
+     * @return Collection|Service[]
+     */
+    public function getServices(): Collection
+    {
+        return $this->services;
+    }
+
+    /**
+     * @return Collection|InsurancePayment[]
+     */
+    public function getInsurancePayments(): Collection
+    {
+        return $this->insurancePayments;
+    }
+
+    /**
+     * @return Collection|FuelEntry[]
+     */
+    public function getFuelEntries(): Collection
+    {
+        return $this->fuelEntries;
+    }
+
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
@@ -178,5 +226,10 @@ class Vehicles
         return $this;
     }
 
-
+    public function getExpenses()
+    {
+        return new ArrayCollection(
+            array_merge($this->fuelEntries->toArray(), $this->insurancePayments->toArray(), $this->services->toArray())
+        );
+    }
 }
