@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Entity\Vehicles;
+use App\Entity\Vehicle;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -24,9 +24,23 @@ class ExpensesApiController extends AbstractController
     {
         /** @var EntityManager $em */
         $em = $this->get('doctrine')->getManager();
-        $vehicles = $em->getRepository(Vehicles::class)->findAll();
+        $vehicles = $em->getRepository(Vehicle::class)->findBy([], [], 10);
 
-        $jsonContent = $serializer->serialize($vehicles, 'json');
+        $expensesArray = [];
+        foreach ($vehicles as $vehicle) {
+            foreach ($vehicle->getExpenses() as $expense) {
+                $expensesArray[] = [
+                    'id' => $vehicle->getId(),
+                    'name' => $vehicle->getName(),
+                    'plateNumber' => $vehicle->getPlateNumber(),
+                    'type' => $expense->getExpenseType(),
+                    'cost' => $expense->getExpenseCost(),
+                    'createdAt' => $expense->getExpenseCreationDate(),
+                ];
+            }
+        }
+
+        $jsonContent = $serializer->serialize($expensesArray, 'json');
         return $this->json($jsonContent);
     }
 }
