@@ -243,13 +243,13 @@ class Service
         return 'service';
     }
 
-    public function getExpenseCost()
+    public static function getCostField()
     {
-        return $this->total;
+        return 'total';
     }
 
-    public function getExpenseCreationDate()
+    public static function getCreationDateField()
     {
-        return $this->createdAt;
+        return 'createdAt';
     }
 }

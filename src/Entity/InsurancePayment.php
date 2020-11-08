@@ -148,13 +148,13 @@ class InsurancePayment
         return 'insurance';
     }
 
-    public function getExpenseCost()
+    public static function getCostField()
     {
-        return $this->amount;
+        return 'amount';
     }
 
-    public function getExpenseCreationDate()
+    public static function getCreationDateField()
     {
-        return $this->contractDate;
+        return 'contractDate';
     }
 }

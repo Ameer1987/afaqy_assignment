@@ -148,13 +148,13 @@ class FuelEntry
         return 'fuel';
     }
 
-    public function getExpenseCost()
+    public static function getCostField()
     {
-        return $this->cost;
+        return 'cost';
     }
 
-    public function getExpenseCreationDate()
+    public static function getCreationDateField()
     {
-        return $this->entryDate;
+        return 'entryDate';
     }
 }

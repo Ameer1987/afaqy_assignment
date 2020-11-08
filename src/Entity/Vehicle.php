@@ -298,4 +298,13 @@ class Vehicle
 
         return $this;
     }
+
+    public static function getExpenseTypes()
+    {
+        return [
+            'fuel' => FuelEntry::class,
+            'insurance' => FuelEntry::class,
+            'service' => Service::class,
+        ];
+    }
 }

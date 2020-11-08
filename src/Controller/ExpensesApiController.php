@@ -22,12 +22,15 @@ class ExpensesApiController extends AbstractController
      */
     public function list(Request $request, ExpensesSerializer $expensesSerializer): Response
     {
+        $searchKeyword = $request->get('vehicle_name');
+        $filters = $request->get('filters');
+        $page = $request->get('page', 1);
+
         /** @var EntityManager $em */
         $em = $this->get('doctrine')->getManager();
-        $vehicles = $em->getRepository(Vehicle::class)->findBy([], [], 10);
+        $vehicles = $em->getRepository(Vehicle::class)->searchExpenses($searchKeyword, $filters);
 
-        $jsonContent = $expensesSerializer->serialize($vehicles, 'json');
-
+        $jsonContent = $expensesSerializer->serialize($vehicles, 'json', $page);
         return $this->json($jsonContent);
     }
 }
